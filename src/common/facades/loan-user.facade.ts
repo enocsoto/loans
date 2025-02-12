@@ -1,4 +1,3 @@
-// src/common/facades/loan-user.facade.ts
 import { Injectable } from '@nestjs/common';
 import { LoansService } from '../../loans/loans.service';
 import { UserService } from '../../user/user.service';
