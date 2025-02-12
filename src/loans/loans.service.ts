@@ -20,8 +20,16 @@ export class LoansService {
     }
   }
 
-  findAll() {
-    return `This action returns all loans`;
+  findAll(userId: string) {
+    try {
+      const loans = this.loanRepository.find({
+        where: { userId },
+        relations: ['user'],
+      });
+      return loans;
+    } catch (error) {
+      throw new BadRequestException('Error finding loans');
+    }
   }
 
   findOne(id: number) {

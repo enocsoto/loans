@@ -18,5 +18,27 @@ export class LoanUserFacade {
     throw new Error('User not found');
   }
 
-  // Otros métodos que combinen funcionalidades de ambos módulos
+  async getLoansByUser(userId: string) {
+    const user = await this.userService.findOneById(userId);
+    if (user) {
+      return this.loansService.findAll(userId);
+    }
+    throw new Error('User not found');
+  }
+
+  async updateLoansByUser(userId: string, loanId: number, updateData: any) {
+    const user = await this.userService.findOneById(userId);
+    if (user) {
+      return this.loansService.update(loanId, updateData);
+    }
+    throw new Error('User not found');
+  }
+
+  async deleteLoanByUser(userId: string, loanId: number) {
+    const user = await this.userService.findOneById(userId);
+    if (user) {
+      return this.loansService.remove(loanId);
+    }
+    throw new Error('User not found');
+  }
 }

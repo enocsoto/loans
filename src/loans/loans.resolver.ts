@@ -14,8 +14,8 @@ export class LoansResolver {
   }
 
   @Query(() => [Loan], { name: 'loans' })
-  findAll() {
-    return this.loansService.findAll();
+  findAll(@Args('userId', { type: () => String }) userId: string) {
+    return this.loansService.findAll(userId);
   }
 
   @Query(() => Loan, { name: 'loan' })
