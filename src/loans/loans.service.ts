@@ -11,18 +11,18 @@ export class LoansService {
     @InjectRepository(Loan)
     private readonly loanRepository: Repository<Loan>,
   ) {}
-  create(createLoanInput: CreateLoanInput) {
+  async create(createLoanInput: CreateLoanInput) {
     try {
       const loan = this.loanRepository.create(createLoanInput);
-      return this.loanRepository.save(loan);
+      return await this.loanRepository.save(loan);
     } catch (error) {
       throw new BadRequestException('Error creating loan');
     }
   }
 
-  findAll(userId: string) {
+  async findAll(userId: string) {
     try {
-      const loans = this.loanRepository.find({
+      const loans = await this.loanRepository.find({
         where: { userId },
         relations: ['user'],
       });
@@ -32,15 +32,44 @@ export class LoansService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} loan`;
+  async findOne(id: Loan['id']) {
+    try {
+      const loan = await this.loanRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+      return loan;
+    } catch (error) {
+      throw new BadRequestException('Error finding loan');
+    }
   }
 
-  update(id: number, updateLoanInput: UpdateLoanInput) {
-    return `This action updates a #${id} loan`;
+  async update(
+    id: Loan['id'],
+    updateLoanInput: UpdateLoanInput,
+  ): Promise<Loan> {
+    const { amount, duration, interestRate, status } = updateLoanInput;
+    try {
+      const loan = await this.loanRepository.preload({
+        id,
+      });
+      return this.loanRepository.save({
+        ...loan,
+        amount,
+        duration,
+        interestRate,
+        status,
+      });
+    } catch (error) {
+      throw new BadRequestException('Error updating loan');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} loan`;
+  async remove(id: Loan['id']) {
+    try {
+      const loan = this.findOne(id);
+      await this.loanRepository.update(id, { status: 'CANCELLED' });
+      return loan;
+    } catch (error) {}
   }
 }

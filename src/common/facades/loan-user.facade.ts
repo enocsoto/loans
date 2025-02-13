@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { LoansService } from '../../loans/loans.service';
 import { UserService } from '../../user/user.service';
+import { CreateLoanInput } from '../../loans/dto/create-loan.input';
+import { User } from '../../user/entities/user.entity';
+import { UpdateLoanInput } from '../../loans/dto/update-loan.input';
+import { Loan } from '../../loans/entities/loan.entity';
 
 @Injectable()
 export class LoanUserFacade {
@@ -9,7 +13,8 @@ export class LoanUserFacade {
     private readonly loansService: LoansService,
   ) {}
 
-  async createLoanForUser(userId: string, loanData: any) {
+  async createLoanForUser(loanData: CreateLoanInput) {
+    const { userId } = loanData;
     const user = await this.userService.findOneById(userId);
     if (user) {
       return this.loansService.create(loanData);
@@ -17,7 +22,7 @@ export class LoanUserFacade {
     throw new Error('User not found');
   }
 
-  async getLoansByUser(userId: string) {
+  async getLoansByUser(userId: User['id']) {
     const user = await this.userService.findOneById(userId);
     if (user) {
       return this.loansService.findAll(userId);
@@ -25,7 +30,8 @@ export class LoanUserFacade {
     throw new Error('User not found');
   }
 
-  async updateLoansByUser(userId: string, loanId: number, updateData: any) {
+  async updateLoansByUser(loanId: Loan['id'], updateData: UpdateLoanInput) {
+    const { userId } = updateData;
     const user = await this.userService.findOneById(userId);
     if (user) {
       return this.loansService.update(loanId, updateData);
@@ -33,7 +39,7 @@ export class LoanUserFacade {
     throw new Error('User not found');
   }
 
-  async deleteLoanByUser(userId: string, loanId: number) {
+  async deleteLoanByUser(userId: User['id'], loanId: Loan['id']) {
     const user = await this.userService.findOneById(userId);
     if (user) {
       return this.loansService.remove(loanId);
