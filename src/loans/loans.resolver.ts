@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { LoansService } from './loans.service';
 import { Loan } from './entities/loan.entity';
 import { CreateLoanInput } from './dto/create-loan.input';
@@ -19,7 +19,7 @@ export class LoansResolver {
   }
 
   @Query(() => Loan, { name: 'loan' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Loan['id'] }) id: Loan['id']) {
     return this.loansService.findOne(id);
   }
 
@@ -29,7 +29,7 @@ export class LoansResolver {
   }
 
   @Mutation(() => Loan)
-  removeLoan(@Args('id', { type: () => Int }) id: number) {
+  removeLoan(@Args('id', { type: () => Loan['id'] }) id: string) {
     return this.loansService.remove(id);
   }
 }
